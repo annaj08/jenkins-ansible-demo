@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  become: true
+  tasks:
+    # not using apt-key module
+    # - name: download gpg key
+    #   get_url:
+    #     url: https://apt.releases.hashicorp.com/gpg
+    #     dest: /etc/apt/trusted.gpg.d/hashicorp-archive-keyring.asc
+
+    # - name: add the official Hashicorp Linux repository
+    #   apt_repository:
+    #     repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.asc] https://apt.releases.hashicorp.com {{ ansible_lsb.codename }} main"
+    #     state: present
+    #     update_cache: yes
+
+    # using apt-key module
+    - name: download gpg key
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: add the official Hashicorp Linux repository
+      apt_repository:
+        repo: "deb https://apt.releases.hashicorp.com {{ ansible_lsb.codename }} main"
+        state: present
+        update_cache: yes
+
+    - name: Install hashicorp vault
+      apt:
+        name: vault
+        state: present
